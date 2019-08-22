@@ -75,7 +75,7 @@
               <h1>Welcome { user.fullName }</h1>
               <ul>
                 {
-                  companies.map( company => <li key= {company.id}>{ company.name} {CompanyFollowing}</li>)
+                  companies.map( company => <li key= {company.id}> <CompanyFollowing company = { company} /></li>)
                 }
                 </ul>
                 </div>
