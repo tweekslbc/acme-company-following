@@ -1,17 +1,19 @@
 <html>
-  <head>
-      <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-      <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
-      <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    <style>
-    </style>
-  </head>
-  <body>
-    <div id='root'></div>
-    <script type= 'text/babel'>
+<head>
+  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+  </style>
+</head>
+
+<body>
+  <div id='root'></div>
+  <script type='text/babel'>
       const { render } = ReactDOM;
       const { Component } = React;
       const root = document.querySelector('#root');
@@ -34,11 +36,13 @@
       storage.setItem('userId', user.id);
       return  user;
     };
-    const CompanyFollowing = ({ company, followed })=> {
+    const CompanyFollowing = ({ company, followed, onChange })=> {
       return (
         <li>
           { company.name }
-          <select value={ followed ? followed.rating: ''}>
+          <select value={ followed ? followed.rating: ''} onChange={(ev)=>{
+           console.log(ev.type)
+          }}>
             {
               ['', 1, 2, 3, 4, 5].map( num => <option key= { num }>{ num }</option>)
             }
@@ -56,8 +60,21 @@
             companies: [],
             following: []
           };
+          this.onChange = this.onChange.bind(this);
         }
-
+        onChange(company, rating, following){
+          if(followed){
+            if(rating){
+              console.log("Update it", rating)
+            }
+            else{
+              console.log("Delete it")
+            }
+          }
+          else{
+            console.log("Create it")
+          }
+        }
         async componentDidMount(){
           const user= await fetchUser();
           const companies = (await axios(`${API}/companies`)).data;
@@ -68,13 +85,18 @@
           this.setState({ user, companies, following });
         }
         render(){
+          const {onChange} = this;
           const { user, companies, following } = this.state;
           return (
             <div>
               <h1>Welcome { user.fullName }</h1>
               <ul>
                 {
-                  companies.map( company => <CompanyFollowing key ={company.id} company = { company} />)
+                  companies.map( company =>  {
+                    const follow =  following.find(f => f.companyId === company.id) ? 'Following': 'Not Following'
+                    return (<CompanyFollowing key ={company.id} company = { company} follow={follow} />
+                   )
+                    })
                 }
                 </ul>
                 </div>
@@ -88,5 +110,6 @@
     </script>
 
 
-  </body>
+</body>
+
 </html>
