@@ -35,9 +35,8 @@
       return  user;
     };
     const CompanyFollowing = ({ company, followed })=> {
-      console.log(followed);
       return (
-        <li>
+        <li  key= {company.id}>
           { company.name }
           <select value={ followed ? followed.rating: ''}>
             {
@@ -75,7 +74,7 @@
               <h1>Welcome { user.fullName }</h1>
               <ul>
                 {
-                  companies.map( company => <li key= {company.id}> <CompanyFollowing company = { company} /></li>)
+                  companies.map( company => <CompanyFollowing company = { company} />)
                 }
                 </ul>
                 </div>
