@@ -1,9 +1,11 @@
 <html>
   <head>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"crossorigin ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
+      <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+      <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
+      <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
     <style>
     </style>
   </head>
@@ -43,6 +45,24 @@
           };
         }
 
+        async componentDidMount(){
+          const user= await fetchUser();
+          const companies = (await axios(`${API}/companies`)).data;
+          this.setState({ user, companies });
+        }
+        render(){
+          const { user, companies } = this.state;
+          return (
+            <div>
+              <h1>Welcome { user.fullName }</h1>
+              <ul>
+                {
+                  companies.map( company => <li key= {company.id}>{ company.name}</li>)
+                }
+                </ul>
+                </div>
+          );
+        }
 
       }
 
