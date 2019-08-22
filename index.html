@@ -34,6 +34,19 @@
       storage.setItem('userId', user.id);
       return  user;
     };
+    const CompanyFollowing = ({ company, followed })=> {
+      console.log(followed);
+      return (
+        <li>
+          { company.name }
+          <select value={ followed ? followed.rating: ''}>
+            {
+              ['', 1, 2, 3, 4, 5].map( num => <option>{ num }</option>)
+            }
+            </select>
+            </li>
+      );
+    };
 
 
       class App extends Component{
@@ -49,6 +62,10 @@
         async componentDidMount(){
           const user= await fetchUser();
           const companies = (await axios(`${API}/companies`)).data;
+          const following = [
+            {companyId: companies[1].id, rating: 3},
+            {companyId: companies[3].id, rating: 2},
+          ];
           this.setState({ user, companies, following });
         }
         render(){
@@ -58,7 +75,7 @@
               <h1>Welcome { user.fullName }</h1>
               <ul>
                 {
-                  companies.map( company => <li key= {company.id}>{ company.name}</li>)
+                  companies.map( company => <li key= {company.id}>{ company.name} {CompanyFollowing}</li>)
                 }
                 </ul>
                 </div>
