@@ -41,17 +41,18 @@
           super();
           this.state ={
             user: {},
-            companies: []
+            companies: [],
+            following: []
           };
         }
 
         async componentDidMount(){
           const user= await fetchUser();
           const companies = (await axios(`${API}/companies`)).data;
-          this.setState({ user, companies });
+          this.setState({ user, companies, following });
         }
         render(){
-          const { user, companies } = this.state;
+          const { user, companies, following } = this.state;
           return (
             <div>
               <h1>Welcome { user.fullName }</h1>
