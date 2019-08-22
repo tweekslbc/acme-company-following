@@ -14,12 +14,24 @@
       const { Component } = React;
       const root = document.querySelector('#root');
 
+      const API = 'https://acme-users-api-rev.herokuapp.com/api/users/random';
 
 
 
+      class App extends Component{
+        constructor(){
+          super();
+          this.state ={
+            user: {},
+            companies: []
+          };
+        }
 
 
+      }
 
+
+      render(<App />, root);
     </script>
 
 
