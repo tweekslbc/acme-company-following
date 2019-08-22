@@ -1,115 +1,118 @@
 <html>
+  <head>
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-<head>
-  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style></style>
+  </head>
 
-  <style>
-  </style>
-</head>
-
-<body>
-  <div id='root'></div>
-  <script type='text/babel'>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
       const { render } = ReactDOM;
       const { Component } = React;
-      const root = document.querySelector('#root');
+      const root = document.querySelector("#root");
 
-      const API = 'https://acme-users-api-rev.herokuapp.com/api';
+      const API = "https://acme-users-api-rev.herokuapp.com/api";
 
-    const fetchUser = async ()=> {
-      const storage = window.localStorage;
-      const userId = storage.getItem('userId');
-      if(userId){
-        try {
-          return (await axios.get(`${API}/users/detail/${userId}`)).data;
+      const fetchUser = async () => {
+        const storage = window.localStorage;
+        const userId = storage.getItem("userId");
+        if (userId) {
+          try {
+            return (await axios.get(`${API}/users/detail/${userId}`)).data;
+          } catch (ex) {
+            storage.removeItem("userId");
+            return fetchUser();
+          }
         }
-        catch(ex){
-          storage.removeItem('userId');
-          return fetchUser();
-        }
-      }
-      const user = (await axios.get(`${API}/users/random`)).data;
-      storage.setItem('userId', user.id);
-      return  user;
-    };
-    const CompanyFollowing = ({ company, followed, onChange })=> {
-      return (
-        <li>
-          { company.name }
-          <select value={ followed ? followed.rating: ''} onChange={(ev)=>{
-           console.log(ev.type)
-          }}>
-            {
-              ['', 1, 2, 3, 4, 5].map( num => <option key= { num }>{ num }</option>)
-            }
+        const user = (await axios.get(`${API}/users/random`)).data;
+        storage.setItem("userId", user.id);
+        return user;
+      };
+      const CompanyFollowing = ({ company, followed, onChange }) => {
+        return (
+          <li>
+            {company.name}
+            <select
+              value={followed ? followed.rating : ""}
+              onChange={ev => {
+                console.log(ev.type);
+              }}
+            >
+              {["", 1, 2, 3, 4, 5].map(num => (
+                <option key={num}>{num}</option>
+              ))}
             </select>
-            </li>
-      );
-    };
+          </li>
+        );
+      };
 
-
-      class App extends Component{
-        constructor(){
+      class App extends Component {
+        constructor() {
           super();
-          this.state ={
+          this.state = {
             user: {},
             companies: [],
             following: []
           };
           this.onChange = this.onChange.bind(this);
         }
-        onChange(company, rating, following){
-          if(followed){
-            if(rating){
-              console.log("Update it", rating)
+        onChange(company, rating, following) {
+          if (followed) {
+            if (rating) {
+              console.log("Update it", rating);
+            } else {
+              console.log("Delete it");
             }
-            else{
-              console.log("Delete it")
-            }
-          }
-          else{
-            console.log("Create it")
+          } else {
+            console.log("Create it");
           }
         }
-        async componentDidMount(){
-          const user= await fetchUser();
+        async componentDidMount() {
+          const user = await fetchUser();
           const companies = (await axios(`${API}/companies`)).data;
           const following = [
-            {companyId: companies[1].id, rating: 3},
-            {companyId: companies[3].id, rating: 2},
+            { companyId: companies[1].id, rating: 3 },
+            { companyId: companies[3].id, rating: 2 }
           ];
           this.setState({ user, companies, following });
         }
-        render(){
-          const {onChange} = this;
+        render() {
+          const { onChange } = this;
           const { user, companies, following } = this.state;
           return (
             <div>
-              <h1>Welcome { user.fullName }</h1>
+              <h1>Welcome {user.fullName}</h1>
               <ul>
-                {
-                  companies.map( company =>  {
-                    const follow =  following.find(f => f.companyId === company.id) ? 'Following': 'Not Following'
-                    return (<CompanyFollowing key ={company.id} company = { company} follow={follow} />
-                   )
-                    })
-                }
-                </ul>
-                </div>
+                {companies.map(company => {
+                  const follow = following.find(f => f.companyId === company.id)
+                    ? "Following"
+                    : "Not Following";
+                  return (
+                    <CompanyFollowing
+                      key={company.id}
+                      company={company}
+                      follow={follow}
+                    />
+                  );
+                })}
+              </ul>
+            </div>
           );
         }
-
       }
-
 
       render(<App />, root);
     </script>
-
-
-</body>
-
+  </body>
 </html>
